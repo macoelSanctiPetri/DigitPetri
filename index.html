@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DigComp 3.0 - IES Sancti Petri</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -16,377 +13,439 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-900">
-    <div id="root"></div>
+    <header class="bg-slate-900 text-white p-4 shadow-xl sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <a href="#inicio" class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white w-10 h-10 flex items-center justify-center rounded-xl font-black text-xl shadow-lg shadow-blue-900/50">S</div>
+                <div>
+                    <h1 class="text-lg font-black leading-none uppercase tracking-tighter italic">DigComp 3.0</h1>
+                    <p class="text-[10px] text-blue-400 font-bold tracking-widest">IES SANCTI PETRI</p>
+                </div>
+            </a>
+            <nav class="flex flex-wrap items-center gap-2 text-[11px] font-black tracking-widest uppercase">
+                <a class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700" href="#inicio">Inicio</a>
+                <a class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700" href="#plan">Plan STEAM 4.0</a>
+                <a class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700" href="#areas">Áreas</a>
+            </nav>
+        </div>
+    </header>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+    <main class="max-w-6xl mx-auto p-6 lg:p-12 space-y-16">
+        <section id="inicio" class="fade-in space-y-10">
+            <div class="flex flex-col md:flex-row items-center gap-8 bg-white p-10 rounded-[3rem] shadow-sm border border-slate-200">
+                <div class="bg-blue-600 text-white w-20 h-20 rounded-[1.8rem] flex items-center justify-center shrink-0 shadow-2xl shadow-blue-200">
+                    <span class="text-3xl font-black">DC</span>
+                </div>
+                <div class="text-center md:text-left space-y-2">
+                    <h2 class="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight leading-tight italic uppercase">Estructura Curricular DigComp 3.0</h2>
+                    <p class="text-slate-500 max-w-2xl text-base font-medium">Adaptación oficial del IES Sancti Petri para la integración gradual de competencias digitales en el aula.</p>
+                </div>
+            </div>
 
-        // --- ICONOS ---
-        const IconBase = ({ children, className, size = 20 }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
-        );
-        const BookOpen = (p) => <IconBase {...p}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></IconBase>;
-        const Users = (p) => <IconBase {...p}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconBase>;
-        const Zap = (p) => <IconBase {...p}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></IconBase>;
-        const Home = (p) => <IconBase {...p}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></IconBase>;
-        const Clipboard = (p) => <IconBase {...p}><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></IconBase>;
-        const Shield = (p) => <IconBase {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></IconBase>;
-        const FileText = (p) => <IconBase {...p}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 22 8"/></IconBase>;
-        const ChevronRight = (p) => <IconBase {...p}><polyline points="9 18 15 12 9 6"/></IconBase>;
-        
-        // Nuevo icono: DigitalStudent (Representa digitalización del alumnado)
-        const DigitalStudent = (p) => (
-            <IconBase {...p}>
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2v-5" />
-                <circle cx="12" cy="12" r="2" fill="currentColor" opacity="0.3" />
-                <path d="M12 17v2M9 19h6" />
-            </IconBase>
-        );
+            <div id="areas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <a href="#area-1" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all">
+                    <div class="bg-blue-100 text-blue-700 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+                        <span class="font-black">1</span>
+                    </div>
+                    <h3 class="font-black text-xl text-slate-800 mb-3 leading-tight tracking-tight italic uppercase">Alfabetización informacional y de datos</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed font-medium">Identificar, localizar, recuperar, almacenar, organizar y analizar la información digital.</p>
+                </a>
+                <a href="#area-2" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all">
+                    <div class="bg-emerald-100 text-emerald-700 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+                        <span class="font-black">2</span>
+                    </div>
+                    <h3 class="font-black text-xl text-slate-800 mb-3 leading-tight tracking-tight italic uppercase">Comunicación y colaboración</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed font-medium">Comunicar en entornos digitales, compartir recursos, conectar con otros y colaborar mediante herramientas digitales.</p>
+                </a>
+                <a href="#area-3" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all">
+                    <div class="bg-purple-100 text-purple-700 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+                        <span class="font-black">3</span>
+                    </div>
+                    <h3 class="font-black text-xl text-slate-800 mb-3 leading-tight tracking-tight italic uppercase">Creación de contenidos digitales</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed font-medium">Crear y editar contenidos nuevos, integrar conocimientos previos y realizar producciones artísticas.</p>
+                </a>
+                <a href="#area-4" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all">
+                    <div class="bg-rose-100 text-rose-700 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+                        <span class="font-black">4</span>
+                    </div>
+                    <h3 class="font-black text-xl text-slate-800 mb-3 leading-tight tracking-tight italic uppercase">Seguridad</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed font-medium">Protección de dispositivos, datos personales, salud y entorno.</p>
+                </a>
+                <a href="#area-5" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all">
+                    <div class="bg-amber-100 text-amber-700 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+                        <span class="font-black">5</span>
+                    </div>
+                    <h3 class="font-black text-xl text-slate-800 mb-3 leading-tight tracking-tight italic uppercase">Resolución de problemas</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed font-medium">Identificar necesidades y recursos digitales y resolver problemas técnicos.</p>
+                </a>
+            </div>
+        </section>
 
-        const digCompData = {
-          areas: [
-            { 
-              id: 1, 
-              title: "Alfabetización informacional y de datos", 
-              icon: <BookOpen />, 
-              color: "bg-blue-100 text-blue-700", 
-              description: "Identificar, localizar, recuperar, almacenar, organizar y analizar la información digital.", 
-              competences: [
-                { id: "1.1", name: "1.1 Navegación, búsqueda y filtrado de datos, información y contenidos digitales", levels: { 
-                    "1º ESO": { objective: "Búsqueda simple guiada.", activity: "Uso de Google para investigar sobre los esteros de San Fernando.", evidence: "Lista de 3 enlaces útiles.", rubric: ["1: Copia URL", "5: Selecciona info relevante"] },
-                    "2º ESO": { objective: "Filtrado avanzado.", activity: "Búsqueda de archivos específicos (PDF) sobre el cambio climático.", evidence: "Documento con enlaces directos a informes.", rubric: ["1: No filtra", "5: Domina filtros de tipo de archivo"] },
-                    "3º ESO": { objective: "Buscadores académicos.", activity: "Google Scholar vs Google: diferencias de fiabilidad.", evidence: "Ficha comparativa de fuentes.", rubric: ["1: No distingue", "5: Cita fuentes académicas"] },
-                    "4º ESO": { objective: "Estrategias de búsqueda experta.", activity: "Uso de operadores booleanos (AND, OR, NOT).", evidence: "Historial de búsqueda compleja.", rubric: ["1: No usa operadores", "5: Búsqueda profesional"] }
-                }},
-                { id: "1.2", name: "1.2 Evaluación de datos, información y contenidos digitales", levels: { 
-                    "1º ESO": { objective: "Diferenciar realidad de ficción.", activity: "Identificar noticias falsas (Fake News) básicas.", evidence: "Cuestionario de veracidad.", rubric: ["1: Cree todo", "5: Identifica noticias falsas"] },
-                    "2º ESO": { objective: "Contraste de fuentes.", activity: "Buscar la misma noticia en dos periódicos diferentes.", evidence: "Tabla de coincidencias/discrepancias.", rubric: ["1: Una fuente", "5: Triangula información"] },
-                    "3º ESO": { objective: "Sesgos de la IA.", activity: "Analizar una respuesta de ChatGPT buscando errores o sesgos.", evidence: "Captura comentada de la IA.", rubric: ["1: IA infalible", "5: Crítico con la IA"] },
-                    "4º ESO": { objective: "Fact-checking.", activity: "Uso de herramientas como Maldita.es o Newtral.", evidence: "Informe de verificación de un bulo.", rubric: ["1: Comparte sin mirar", "5: Verifica profesionalmente"] }
-                }}
-              ]
-            },
-            { 
-              id: 2, 
-              title: "Comunicación y colaboración", 
-              icon: <Users />, 
-              color: "bg-emerald-100 text-emerald-700", 
-              description: "Comunicar en entornos digitales, compartir recursos, conectar con otros y colaborar mediante herramientas digitales.", 
-              competences: [
-                { id: "2.1", name: "2.1 Interacción mediante las tecnologías digitales", levels: { 
-                    "1º ESO": { objective: "Uso del correo corporativo.", activity: "Enviar email formal al tutor con asunto y firma.", evidence: "Cuerpo del email en 'Enviados'.", rubric: ["1: Sin asunto/firma", "5: Protocolo formal perfecto"] },
-                    "2º ESO": { objective: "Participación en Classroom.", activity: "Debatir en el tablón de Classroom siguiendo normas de cortesía.", evidence: "Comentarios en el hilo del debate.", rubric: ["1: Lenguaje SMS", "5: Netiqueta ejemplar"] },
-                    "3º ESO": { objective: "Comunicación asíncrona avanzada.", activity: "Uso de comentarios y sugerencias en documentos.", evidence: "Hilos de comentarios resueltos.", rubric: ["1: No comenta", "5: Feedback constructivo"] },
-                    "4º ESO": { objective: "Gestión de videoconferencias.", activity: "Uso de Google Meet (micro, fondo, compartir pantalla).", evidence: "Checklist de participación técnica.", rubric: ["1: Problemas técnicos", "5: Fluidez total"] }
-                }},
-                { id: "2.4", name: "2.4 Colaboración mediante tecnologías digitales", levels: { 
-                    "1º ESO": { objective: "Compartir archivos básicos.", activity: "Añadir permiso de lectura a un compañero en Drive.", evidence: "Captura de pantalla de configuración de permisos.", rubric: ["1: Sin permisos", "5: Permisos correctos"] },
-                    "2º ESO": { objective: "Edición colaborativa.", activity: "Crear una presentación grupal en Google Slides.", evidence: "Historial de versiones (todos aportan).", rubric: ["1: Solo aporta uno", "5: Trabajo equitativo"] },
-                    "3º ESO": { objective: "Gestión de proyectos.", activity: "Uso de tareas en Classroom/Drive para dividir trabajo.", evidence: "Asignación de roles digital.", rubric: ["1: Desorganizado", "5: Gestión eficiente"] },
-                    "4º ESO": { objective: "Ecosistemas colaborativos.", activity: "Integración de Canva y Drive en un proyecto STEAM.", evidence: "Carpeta compartida organizada.", rubric: ["1: Archivos sueltos", "5: Estructura profesional"] }
-                }}
-              ]
-            },
-            { 
-              id: 3, 
-              title: "Creación de contenidos digitales", 
-              icon: <FileText />, 
-              color: "bg-purple-100 text-purple-700", 
-              description: "Crear y editar contenidos nuevos, integrar y reelaborar conocimientos previos, realizar producciones artísticas y programar.", 
-              competences: [
-                { id: "3.1", name: "3.1 Desarrollo de contenidos digitales", levels: { 
-                    "1º ESO": { objective: "Diseño visual básico (Canva).", activity: "Crear un cartel sobre las normas de clase.", evidence: "Archivo PDF/Imagen de Canva.", rubric: ["1: Plantilla vacía", "5: Creatividad y armonía"] },
-                    "2º ESO": { objective: "Infografías y datos.", activity: "Infografía en Canva sobre una época histórica.", evidence: "Enlace de visualización.", rubric: ["1: Mucho texto", "5: Equilibrio visual"] },
-                    "3º ESO": { objective: "Contenidos interactivos (Genially).", activity: "Presentación interactiva sobre el cuerpo humano.", evidence: "URL del Genially interactivo.", rubric: ["1: Estático", "5: Interactividad fluida"] },
-                    "4º ESO": { objective: "Edición de vídeo (Clipchamp).", activity: "Vídeo-tutorial sobre un experimento de ciencias.", evidence: "Archivo MP4 editado.", rubric: ["1: Sin cortes/audio", "5: Montaje profesional"] }
-                }},
-                { id: "3.2", name: "3.2 Integración y reelaboración de contenidos digitales", levels: { 
-                    "1º ESO": { objective: "Combinar texto e imágenes.", activity: "Insertar imágenes con pie de foto en un Doc.", evidence: "Documento maquetado.", rubric: ["1: Imágenes flotantes", "5: Maquetación correcta"] },
-                    "2º ESO": { objective: "Edición de imágenes.", activity: "Quitar fondos y ajustar brillo/contraste.", evidence: "Antes y después de la imagen.", rubric: ["1: Sin edición", "5: Mejora visual clara"] },
-                    "3º ESO": { objective: "Uso de IA generativa.", activity: "Generar imagen con IA para ilustrar un relato.", evidence: "Imagen + Prompt utilizado.", rubric: ["1: Mal prompt", "5: Prompt detallado"] },
-                    "4º ESO": { objective: "Curación de contenidos.", activity: "Blog o portfolio digital recopilando trabajos.", evidence: "Enlace al portfolio (Sites).", rubric: ["1: Desactualizado", "5: Recopilación completa"] }
-                }}
-              ]
-            },
-            { 
-              id: 4, 
-              title: "Seguridad", 
-              icon: <Shield />, 
-              color: "bg-rose-100 text-rose-700", 
-              description: "Protección de dispositivos, datos personales, salud y entorno.", 
-              competences: [
-                { id: "4.1", name: "4.1 Protección de dispositivos", levels: { 
-                    "1º ESO": { objective: "Contraseñas seguras.", activity: "Crear una clave robusta (método frase).", evidence: "Test de fortaleza de clave.", rubric: ["1: 123456", "5: Inexpugnable"] },
-                    "2º ESO": { objective: "Actualizaciones y antivirus.", activity: "Simular la gestión de avisos de seguridad.", evidence: "Captura de pantalla de seguridad.", rubric: ["1: Ignora avisos", "5: Actúa correctamente"] },
-                    "3º ESO": { objective: "Protección en redes públicas.", activity: "Diferenciar entre HTTPS y HTTP.", evidence: "Análisis de 3 webs conocidas.", rubric: ["1: No distingue", "5: Identifica sitios seguros"] },
-                    "4º ESO": { objective: "Autenticación doble factor (2FA).", activity: "Configurar/entender el sistema de 2 pasos.", evidence: "Explicación del proceso.", rubric: ["1: No lo usa", "5: Entiende su valor"] }
-                }}
-              ]
-            },
-            { 
-              id: 5, 
-              title: "Resolución de problemas", 
-              icon: <Zap />, 
-              color: "bg-amber-100 text-amber-700", 
-              description: "Identificar necesidades y recursos digitales, tomar decisiones sobre herramientas y resolver problemas conceptuales y técnicos.", 
-              competences: [
-                { id: "5.1", name: "5.1 Resolución de problemas técnicos", levels: { 
-                    "1º ESO": { objective: "Conexión y acceso.", activity: "Resolver olvido de contraseña y conexión Wi-Fi.", evidence: "Acceso autónomo al equipo.", rubric: ["1: Pide ayuda", "5: Autónomo"] },
-                    "2º ESO": { objective: "Formatos de archivo.", activity: "Convertir de Doc a PDF e imágenes (PNG/JPG).", evidence: "Envío de archivos en formato pedido.", rubric: ["1: Formato erróneo", "5: Formato óptimo"] },
-                    "3º ESO": { objective: "IA para solucionar dudas.", activity: "Consultar a la IA cómo hacer una fórmula en Excel.", evidence: "Conversación con la IA.", rubric: ["1: No pregunta", "5: Soluciona error"] },
-                    "4º ESO": { objective: "Autonomía de software.", activity: "Instalar extensiones de utilidad educativa en Chrome.", evidence: "Barra de extensiones operativa.", rubric: ["1: No instala", "5: Personaliza entorno"] }
-                }}
-              ]
-            }
-          ]
-        };
-
-        function App() {
-            const [view, setView] = useState('home');
-            const [selectedArea, setSelectedArea] = useState(null);
-            const [selectedComp, setSelectedComp] = useState(null);
-            const [selectedCourse, setSelectedCourse] = useState('1º ESO');
-
-            const currentArea = digCompData.areas.find(a => a.id === selectedArea);
-            const currentComp = currentArea?.competences.find(c => c.id === selectedComp);
-            const content = currentComp?.levels[selectedCourse];
-
-            return (
-                <div className="min-h-screen flex flex-col">
-                    {/* Header */}
-                    <header className="bg-slate-900 text-white p-4 shadow-xl flex justify-between items-center sticky top-0 z-50">
-                        <div className="flex items-center gap-3 cursor-pointer" onClick={() => {setView('home'); setSelectedArea(null); setSelectedComp(null);}}>
-                            <div className="bg-blue-600 text-white w-10 h-10 flex items-center justify-center rounded-xl font-black text-xl shadow-lg shadow-blue-900/50">S</div>
-                            <div>
-                                <h1 className="text-lg font-black leading-none uppercase tracking-tighter italic">DigComp 3.0</h1>
-                                <p className="text-[10px] text-blue-400 font-bold tracking-widest">IES SANCTI PETRI</p>
-                            </div>
-                        </div>
-                        <div className="flex bg-slate-800 p-1.5 rounded-2xl gap-1 ring-1 ring-white/10">
-                            {['1º ESO', '2º ESO', '3º ESO', '4º ESO'].map(c => (
-                                <button 
-                                    key={c} 
-                                    onClick={() => setSelectedCourse(c)} 
-                                    className={`px-4 py-2 rounded-xl text-[11px] font-black transition-all ${selectedCourse === c ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-slate-700'}`}
-                                >
-                                    {c}
-                                </button>
-                            ))}
-                        </div>
-                    </header>
-
-                    <div className="flex flex-1 overflow-hidden">
-                        {/* Sidebar Navigation */}
-                        <nav className="w-72 bg-white border-r border-slate-200 p-5 space-y-8 hidden lg:block overflow-y-auto">
-                            <div className="space-y-1">
-                                <button onClick={() => {setView('home'); setSelectedArea(null); setSelectedComp(null);}} className={`w-full text-left p-3.5 rounded-2xl flex items-center gap-3 transition-all ${view === 'home' ? 'bg-slate-100 text-slate-900 font-bold shadow-inner' : 'text-slate-500 hover:bg-slate-50'}`}>
-                                    <Home size={18}/> <span className="text-sm">Panel Principal</span>
-                                </button>
-                                <button onClick={() => {setView('plan'); setSelectedArea(null); setSelectedComp(null);}} className={`w-full text-left p-3.5 rounded-2xl flex items-center gap-3 transition-all ${view === 'plan' ? 'bg-slate-100 text-slate-900 font-bold shadow-inner' : 'text-slate-500 hover:bg-slate-50'}`}>
-                                    <DigitalStudent size={18}/> <span className="text-sm">Plan STEAM 4.0</span>
-                                </button>
-                            </div>
-                            
-                            <div className="pt-6 border-t border-slate-100">
-                                <div className="px-3 pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Marco DigComp 3.0</div>
-                                <div className="space-y-1.5">
-                                    {digCompData.areas.map(a => (
-                                        <button 
-                                            key={a.id} 
-                                            onClick={() => {setSelectedArea(a.id); setSelectedComp(null); setView('area');}} 
-                                            className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-all ${selectedArea === a.id && view === 'area' ? 'bg-blue-50 ring-1 ring-blue-100' : 'hover:bg-slate-50 opacity-80 hover:opacity-100'}`}
-                                        >
-                                            <div className={`${a.color} w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm`}>
-                                                {React.cloneElement(a.icon, { size: 16 })}
-                                            </div>
-                                            <span className={`text-[11px] leading-tight flex-1 ${selectedArea === a.id && view === 'area' ? 'font-black text-blue-900' : 'font-semibold text-slate-600'}`}>
-                                                {a.title}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </nav>
-
-                        {/* Main Viewport */}
-                        <main className="flex-1 overflow-y-auto bg-[#f8fafc] p-6 lg:p-12">
-                            {view === 'home' && (
-                                <div className="fade-in max-w-6xl mx-auto space-y-12">
-                                    <div className="flex flex-col md:flex-row items-center gap-8 bg-white p-10 rounded-[3rem] shadow-sm border border-slate-200">
-                                        <div className="bg-blue-600 text-white w-20 h-20 rounded-[1.8rem] flex items-center justify-center shrink-0 shadow-2xl shadow-blue-200">
-                                            <DigitalStudent size={40} />
-                                        </div>
-                                        <div className="text-center md:text-left space-y-2">
-                                            <h2 className="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight leading-tight italic uppercase">Estructura Curricular DigComp 3.0</h2>
-                                            <p className="text-slate-500 max-w-2xl text-base font-medium">Adaptación oficial del IES Sancti Petri para la integración gradual de competencias digitales en el aula.</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                        {digCompData.areas.map(area => (
-                                            <div 
-                                                key={area.id} 
-                                                onClick={() => {setSelectedArea(area.id); setSelectedComp(null); setView('area');}} 
-                                                className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 cursor-pointer hover:shadow-2xl hover:-translate-y-2 transition-all group relative overflow-hidden"
-                                            >
-                                                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                                                    {React.cloneElement(area.icon, { size: 120 })}
-                                                </div>
-                                                <div className={`${area.color} w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all group-hover:scale-110 shadow-inner`}>
-                                                    {area.icon}
-                                                </div>
-                                                <h3 className="font-black text-xl text-slate-800 mb-3 leading-tight tracking-tight italic uppercase">{area.title}</h3>
-                                                <p className="text-slate-500 text-xs leading-relaxed font-medium line-clamp-2">{area.description}</p>
-                                                <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                                                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest italic">Explorar {area.competences.length} Competencias</span>
-                                                    <div className="bg-slate-50 p-2 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                                        <ChevronRight size={14} />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {view === 'plan' && (
-                                <div className="fade-in max-w-5xl mx-auto space-y-12">
-                                    <div className="bg-slate-900 text-white p-12 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-600 rounded-full blur-[150px] opacity-20 -mr-20 -mt-20"></div>
-                                        <div className="relative z-10 space-y-6">
-                                            <div className="bg-blue-600 text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full inline-block">Informe TDE 2025-2026</div>
-                                            <h2 className="text-4xl lg:text-6xl font-black tracking-tighter leading-none italic">Implantación Gradual<br/>STEAM 4.0</h2>
-                                            <p className="text-slate-400 max-w-2xl text-lg">Este plan asegura la coherencia metodológica entre departamentos, facilitando una aplicación realista del PAD TDE.</p>
-                                        </div>
-                                        
-                                        <div className="grid gap-6 md:grid-cols-3 mt-16 relative z-10">
-                                            {[
-                                                { phase: "Fase 1", title: "Cimientos", text: "1º y 2º ESO: Obligatoriedad de Workspace y Canva. Organización de Drive y Netiqueta.", color: "text-blue-400" },
-                                                { phase: "Fase 2", title: "Expansión", text: "3º ESO: Herramientas de IA y Genially. Análisis avanzado de datos en Hojas de Cálculo.", color: "text-emerald-400" },
-                                                { phase: "Fase 3", title: "Consolidación", text: "4º ESO: Proyecto interdisciplinar STEAM 4.0. Vídeo avanzado, podcast y portfolio profesional.", color: "text-purple-400" }
-                                            ].map((f, i) => (
-                                                <div key={i} className="bg-white/5 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-colors">
-                                                    <div className={`${f.color} font-black text-[10px] mb-4 uppercase tracking-[0.2em]`}>{f.phase}</div>
-                                                    <h3 className="font-black text-white text-xl mb-3 italic">{f.title}</h3>
-                                                    <p className="text-slate-400 text-xs leading-relaxed font-medium">{f.text}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {view === 'area' && currentArea && (
-                                <div className="fade-in space-y-10 max-w-6xl mx-auto">
-                                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 bg-white p-10 rounded-[3rem] border border-slate-200">
-                                        <div className="flex gap-6 items-start">
-                                            <div className={`${currentArea.color} w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-inner shrink-0`}>
-                                                {currentArea.icon}
-                                            </div>
-                                            <div>
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">Área {currentArea.id}</span>
-                                                    <span className="bg-blue-100 text-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">DigComp 3.0</span>
-                                                </div>
-                                                <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none italic uppercase">{currentArea.title}</h2>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center bg-slate-100 p-2 rounded-2xl ring-1 ring-slate-200">
-                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4">Filtrado por:</span>
-                                            <div className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-black shadow-lg shadow-blue-200 text-xs italic">
-                                                {selectedCourse}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    {!selectedComp ? (
-                                        <div className="grid gap-4">
-                                            {currentArea.competences.map(c => (
-                                                <button key={c.id} onClick={() => setSelectedComp(c.id)} className="w-full text-left p-8 bg-white border border-slate-200 rounded-[2rem] hover:border-blue-500 hover:shadow-2xl flex justify-between items-center transition-all group">
-                                                    <div className="flex items-center gap-6 flex-1 pr-6">
-                                                        <div className="bg-slate-50 text-slate-400 w-12 h-12 rounded-2xl flex items-center justify-center font-black text-sm group-hover:bg-blue-600 group-hover:text-white transition-all shrink-0 italic shadow-inner">{c.id}</div>
-                                                        <span className="font-black text-slate-700 text-lg leading-tight tracking-tight italic uppercase">{c.name}</span>
-                                                    </div>
-                                                    <div className="bg-slate-50 group-hover:bg-blue-50 p-3 rounded-2xl transition-all group-hover:translate-x-1">
-                                                        <ChevronRight size={20} className="text-slate-300 group-hover:text-blue-600" />
-                                                    </div>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="bg-white rounded-[3.5rem] shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-                                            <div className="bg-slate-900 p-10 text-white flex flex-col md:flex-row justify-between items-start gap-8">
-                                                <div className="space-y-6 flex-1">
-                                                    <button onClick={() => setSelectedComp(null)} className="group flex items-center gap-3 text-slate-400 hover:text-white transition-colors">
-                                                        <div className="bg-white/10 p-2 rounded-xl group-hover:bg-white/20">
-                                                            <IconBase className="w-4 h-4 rotate-180"><polyline points="9 18 15 12 9 6"/></IconBase>
-                                                        </div>
-                                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">Volver a Competencias</span>
-                                                    </button>
-                                                    <h3 className="text-3xl font-black leading-tight italic tracking-tighter uppercase">{currentComp.name}</h3>
-                                                </div>
-                                                <div className="px-8 py-3 rounded-2xl text-sm font-black tracking-widest border border-white/20 bg-white/5 whitespace-nowrap italic shadow-inner">
-                                                    NIVEL {selectedCourse}
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="p-10 lg:p-16 space-y-16">
-                                                <div className="bg-blue-50 p-10 rounded-[2.5rem] border-l-[12px] border-blue-600 relative overflow-hidden">
-                                                    <div className="absolute -right-10 -top-10 text-blue-100 opacity-30 transform rotate-12">{currentArea.icon}</div>
-                                                    <h4 className="font-black text-blue-800 text-[10px] uppercase mb-4 tracking-[0.3em] relative z-10 italic">Objetivo del Nivel</h4>
-                                                    <p className="text-slate-800 text-2xl lg:text-3xl font-black leading-tight tracking-tighter italic relative z-10">{content.objective}</p>
-                                                </div>
-
-                                                <div className="grid md:grid-cols-2 gap-8">
-                                                    <div className="p-10 border border-slate-100 rounded-[2.5rem] bg-white hover:border-amber-200 hover:shadow-2xl transition-all group">
-                                                        <div className="bg-amber-100 text-amber-600 w-12 h-12 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
-                                                            <Zap size={24}/>
-                                                        </div>
-                                                        <h4 className="font-black text-slate-400 text-[10px] uppercase mb-3 tracking-[0.2em] italic">Actividad Propuesta</h4>
-                                                        <p className="text-slate-800 text-lg leading-relaxed font-bold italic tracking-tight">{content.activity}</p>
-                                                    </div>
-                                                    <div className="p-10 border border-slate-100 rounded-[2.5rem] bg-white hover:border-blue-200 hover:shadow-2xl transition-all group">
-                                                        <div className="bg-blue-100 text-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform">
-                                                            <FileText size={24}/>
-                                                        </div>
-                                                        <h4 className="font-black text-slate-400 text-[10px] uppercase mb-3 tracking-[0.2em] italic">Evidencia Digital</h4>
-                                                        <p className="text-slate-800 text-lg leading-relaxed font-bold italic tracking-tight">{content.evidence}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="bg-[#f1f5f9] p-10 lg:p-14 rounded-[3.5rem] border border-slate-200">
-                                                    <h4 className="font-black text-slate-800 text-[10px] uppercase mb-10 tracking-[0.3em] flex items-center gap-4 italic">
-                                                        <span className="w-3 h-3 bg-blue-600 rounded-full animate-pulse"></span> 
-                                                        Criterios de Evaluación por Niveles
-                                                    </h4>
-                                                    <div className="grid gap-4">
-                                                        {content.rubric.map((r, i) => (
-                                                            <div key={i} className="flex gap-6 items-center bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 hover:shadow-xl transition-all group">
-                                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-sm shrink-0 shadow-inner italic ${r.startsWith('5') ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600 group-hover:bg-slate-300'}`}>
-                                                                    {r.split(":")[0]}
-                                                                </div>
-                                                                <div className="text-base font-bold text-slate-700 leading-snug italic">{r.split(":")[1]}</div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </main>
+        <section id="plan" class="fade-in">
+            <div class="bg-slate-900 text-white p-12 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-600 rounded-full blur-[150px] opacity-20 -mr-20 -mt-20"></div>
+                <div class="relative z-10 space-y-6">
+                    <div class="bg-blue-600 text-[10px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full inline-block">Informe TDE 2025-2026</div>
+                    <h2 class="text-4xl lg:text-6xl font-black tracking-tighter leading-none italic">Implantación Gradual<br/>STEAM 4.0</h2>
+                    <p class="text-slate-400 max-w-2xl text-lg">Este plan asegura la coherencia metodológica entre departamentos, facilitando una aplicación realista del PAD TDE.</p>
+                </div>
+                
+                <div class="grid gap-6 md:grid-cols-3 mt-16 relative z-10">
+                    <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-colors">
+                        <div class="text-blue-400 font-black text-[10px] mb-4 uppercase tracking-[0.2em]">Fase 1</div>
+                        <h3 class="font-black text-white text-xl mb-3 italic">Cimientos</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed font-medium">1º y 2º ESO: Obligatoriedad de Workspace y Canva. Organización de Drive y Netiqueta.</p>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-colors">
+                        <div class="text-emerald-400 font-black text-[10px] mb-4 uppercase tracking-[0.2em]">Fase 2</div>
+                        <h3 class="font-black text-white text-xl mb-3 italic">Expansión</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed font-medium">3º ESO: Herramientas de IA y Genially. Análisis avanzado de datos en Hojas de Cálculo.</p>
+                    </div>
+                    <div class="bg-white/5 backdrop-blur-xl p-8 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-colors">
+                        <div class="text-purple-400 font-black text-[10px] mb-4 uppercase tracking-[0.2em]">Fase 3</div>
+                        <h3 class="font-black text-white text-xl mb-3 italic">Consolidación</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed font-medium">4º ESO: Proyecto interdisciplinar STEAM 4.0. Vídeo avanzado, podcast y portfolio profesional.</p>
                     </div>
                 </div>
-            );
-        }
+            </div>
+        </section>
+        <section id="area-1" class="space-y-6">
+            <div class="bg-white p-10 rounded-[3rem] border border-slate-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">Área 1</span>
+                    <span class="bg-blue-100 text-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">DigComp 3.0</span>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight leading-none italic uppercase">Alfabetización informacional y de datos</h2>
+                <p class="text-slate-500 mt-4">Identificar, localizar, recuperar, almacenar, organizar y analizar la información digital.</p>
+            </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+            <div class="space-y-4">
+                <details class="bg-white border border-slate-200 rounded-[2rem] p-6">
+                    <summary class="font-black text-slate-700 text-lg italic uppercase cursor-pointer">1.1 Navegación, búsqueda y filtrado de datos, información y contenidos digitales</summary>
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">1º ESO</h4>
+                            <p><strong>Objetivo:</strong> Búsqueda simple guiada.</p>
+                            <p><strong>Actividad:</strong> Uso de Google para investigar sobre los esteros de San Fernando.</p>
+                            <p><strong>Evidencia:</strong> Lista de 3 enlaces útiles.</p>
+                            <p><strong>Rúbrica:</strong> 1: Copia URL · 5: Selecciona info relevante</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">2º ESO</h4>
+                            <p><strong>Objetivo:</strong> Filtrado avanzado.</p>
+                            <p><strong>Actividad:</strong> Búsqueda de archivos específicos (PDF) sobre el cambio climático.</p>
+                            <p><strong>Evidencia:</strong> Documento con enlaces directos a informes.</p>
+                            <p><strong>Rúbrica:</strong> 1: No filtra · 5: Domina filtros de tipo de archivo</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">3º ESO</h4>
+                            <p><strong>Objetivo:</strong> Buscadores académicos.</p>
+                            <p><strong>Actividad:</strong> Google Scholar vs Google: diferencias de fiabilidad.</p>
+                            <p><strong>Evidencia:</strong> Ficha comparativa de fuentes.</p>
+                            <p><strong>Rúbrica:</strong> 1: No distingue · 5: Cita fuentes académicas</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">4º ESO</h4>
+                            <p><strong>Objetivo:</strong> Estrategias de búsqueda experta.</p>
+                            <p><strong>Actividad:</strong> Uso de operadores booleanos (AND, OR, NOT).</p>
+                            <p><strong>Evidencia:</strong> Historial de búsqueda compleja.</p>
+                            <p><strong>Rúbrica:</strong> 1: No usa operadores · 5: Búsqueda profesional</p>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="bg-white border border-slate-200 rounded-[2rem] p-6">
+                    <summary class="font-black text-slate-700 text-lg italic uppercase cursor-pointer">1.2 Evaluación de datos, información y contenidos digitales</summary>
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">1º ESO</h4>
+                            <p><strong>Objetivo:</strong> Diferenciar realidad de ficción.</p>
+                            <p><strong>Actividad:</strong> Identificar noticias falsas (Fake News) básicas.</p>
+                            <p><strong>Evidencia:</strong> Cuestionario de veracidad.</p>
+                            <p><strong>Rúbrica:</strong> 1: Cree todo · 5: Identifica noticias falsas</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">2º ESO</h4>
+                            <p><strong>Objetivo:</strong> Contraste de fuentes.</p>
+                            <p><strong>Actividad:</strong> Buscar la misma noticia en dos periódicos diferentes.</p>
+                            <p><strong>Evidencia:</strong> Tabla de coincidencias/discrepancias.</p>
+                            <p><strong>Rúbrica:</strong> 1: Una fuente · 5: Triangula información</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">3º ESO</h4>
+                            <p><strong>Objetivo:</strong> Sesgos de la IA.</p>
+                            <p><strong>Actividad:</strong> Analizar una respuesta de ChatGPT buscando errores o sesgos.</p>
+                            <p><strong>Evidencia:</strong> Captura comentada de la IA.</p>
+                            <p><strong>Rúbrica:</strong> 1: IA infalible · 5: Crítico con la IA</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">4º ESO</h4>
+                            <p><strong>Objetivo:</strong> Fact-checking.</p>
+                            <p><strong>Actividad:</strong> Uso de herramientas como Maldita.es o Newtral.</p>
+                            <p><strong>Evidencia:</strong> Informe de verificación de un bulo.</p>
+                            <p><strong>Rúbrica:</strong> 1: Comparte sin mirar · 5: Verifica profesionalmente</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section id="area-2" class="space-y-6">
+            <div class="bg-white p-10 rounded-[3rem] border border-slate-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">Área 2</span>
+                    <span class="bg-blue-100 text-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">DigComp 3.0</span>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight leading-none italic uppercase">Comunicación y colaboración</h2>
+                <p class="text-slate-500 mt-4">Comunicar en entornos digitales, compartir recursos, conectar con otros y colaborar mediante herramientas digitales.</p>
+            </div>
+
+            <div class="space-y-4">
+                <details class="bg-white border border-slate-200 rounded-[2rem] p-6">
+                    <summary class="font-black text-slate-700 text-lg italic uppercase cursor-pointer">2.1 Interacción mediante las tecnologías digitales</summary>
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">1º ESO</h4>
+                            <p><strong>Objetivo:</strong> Uso del correo corporativo.</p>
+                            <p><strong>Actividad:</strong> Enviar email formal al tutor con asunto y firma.</p>
+                            <p><strong>Evidencia:</strong> Cuerpo del email en "Enviados".</p>
+                            <p><strong>Rúbrica:</strong> 1: Sin asunto/firma · 5: Protocolo formal perfecto</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">2º ESO</h4>
+                            <p><strong>Objetivo:</strong> Participación en Classroom.</p>
+                            <p><strong>Actividad:</strong> Debatir en el tablón de Classroom siguiendo normas de cortesía.</p>
+                            <p><strong>Evidencia:</strong> Comentarios en el hilo del debate.</p>
+                            <p><strong>Rúbrica:</strong> 1: Lenguaje SMS · 5: Netiqueta ejemplar</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">3º ESO</h4>
+                            <p><strong>Objetivo:</strong> Comunicación asíncrona avanzada.</p>
+                            <p><strong>Actividad:</strong> Uso de comentarios y sugerencias en documentos.</p>
+                            <p><strong>Evidencia:</strong> Hilos de comentarios resueltos.</p>
+                            <p><strong>Rúbrica:</strong> 1: No comenta · 5: Feedback constructivo</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">4º ESO</h4>
+                            <p><strong>Objetivo:</strong> Gestión de videoconferencias.</p>
+                            <p><strong>Actividad:</strong> Uso de Google Meet (micro, fondo, compartir pantalla).</p>
+                            <p><strong>Evidencia:</strong> Checklist de participación técnica.</p>
+                            <p><strong>Rúbrica:</strong> 1: Problemas técnicos · 5: Fluidez total</p>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="bg-white border border-slate-200 rounded-[2rem] p-6">
+                    <summary class="font-black text-slate-700 text-lg italic uppercase cursor-pointer">2.4 Colaboración mediante tecnologías digitales</summary>
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">1º ESO</h4>
+                            <p><strong>Objetivo:</strong> Compartir archivos básicos.</p>
+                            <p><strong>Actividad:</strong> Añadir permiso de lectura a un compañero en Drive.</p>
+                            <p><strong>Evidencia:</strong> Captura de pantalla de configuración de permisos.</p>
+                            <p><strong>Rúbrica:</strong> 1: Sin permisos · 5: Permisos correctos</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">2º ESO</h4>
+                            <p><strong>Objetivo:</strong> Edición colaborativa.</p>
+                            <p><strong>Actividad:</strong> Crear una presentación grupal en Google Slides.</p>
+                            <p><strong>Evidencia:</strong> Historial de versiones (todos aportan).</p>
+                            <p><strong>Rúbrica:</strong> 1: Solo aporta uno · 5: Trabajo equitativo</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">3º ESO</h4>
+                            <p><strong>Objetivo:</strong> Gestión de proyectos.</p>
+                            <p><strong>Actividad:</strong> Uso de tareas en Classroom/Drive para dividir trabajo.</p>
+                            <p><strong>Evidencia:</strong> Asignación de roles digital.</p>
+                            <p><strong>Rúbrica:</strong> 1: Desorganizado · 5: Gestión eficiente</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">4º ESO</h4>
+                            <p><strong>Objetivo:</strong> Ecosistemas colaborativos.</p>
+                            <p><strong>Actividad:</strong> Integración de Canva y Drive en un proyecto STEAM.</p>
+                            <p><strong>Evidencia:</strong> Carpeta compartida organizada.</p>
+                            <p><strong>Rúbrica:</strong> 1: Archivos sueltos · 5: Estructura profesional</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </section>
+        <section id="area-3" class="space-y-6">
+            <div class="bg-white p-10 rounded-[3rem] border border-slate-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">Área 3</span>
+                    <span class="bg-blue-100 text-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">DigComp 3.0</span>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight leading-none italic uppercase">Creación de contenidos digitales</h2>
+                <p class="text-slate-500 mt-4">Crear y editar contenidos nuevos, integrar y reelaborar conocimientos previos, realizar producciones artísticas y programar.</p>
+            </div>
+
+            <div class="space-y-4">
+                <details class="bg-white border border-slate-200 rounded-[2rem] p-6">
+                    <summary class="font-black text-slate-700 text-lg italic uppercase cursor-pointer">3.1 Desarrollo de contenidos digitales</summary>
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">1º ESO</h4>
+                            <p><strong>Objetivo:</strong> Diseño visual básico (Canva).</p>
+                            <p><strong>Actividad:</strong> Crear un cartel sobre las normas de clase.</p>
+                            <p><strong>Evidencia:</strong> Archivo PDF/Imagen de Canva.</p>
+                            <p><strong>Rúbrica:</strong> 1: Plantilla vacía · 5: Creatividad y armonía</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">2º ESO</h4>
+                            <p><strong>Objetivo:</strong> Infografías y datos.</p>
+                            <p><strong>Actividad:</strong> Infografía en Canva sobre una época histórica.</p>
+                            <p><strong>Evidencia:</strong> Enlace de visualización.</p>
+                            <p><strong>Rúbrica:</strong> 1: Mucho texto · 5: Equilibrio visual</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">3º ESO</h4>
+                            <p><strong>Objetivo:</strong> Contenidos interactivos (Genially).</p>
+                            <p><strong>Actividad:</strong> Presentación interactiva sobre el cuerpo humano.</p>
+                            <p><strong>Evidencia:</strong> URL del Genially interactivo.</p>
+                            <p><strong>Rúbrica:</strong> 1: Estático · 5: Interactividad fluida</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">4º ESO</h4>
+                            <p><strong>Objetivo:</strong> Edición de vídeo (Clipchamp).</p>
+                            <p><strong>Actividad:</strong> Vídeo-tutorial sobre un experimento de ciencias.</p>
+                            <p><strong>Evidencia:</strong> Archivo MP4 editado.</p>
+                            <p><strong>Rúbrica:</strong> 1: Sin cortes/audio · 5: Montaje profesional</p>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="bg-white border border-slate-200 rounded-[2rem] p-6">
+                    <summary class="font-black text-slate-700 text-lg italic uppercase cursor-pointer">3.2 Integración y reelaboración de contenidos digitales</summary>
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">1º ESO</h4>
+                            <p><strong>Objetivo:</strong> Combinar texto e imágenes.</p>
+                            <p><strong>Actividad:</strong> Insertar imágenes con pie de foto en un Doc.</p>
+                            <p><strong>Evidencia:</strong> Documento maquetado.</p>
+                            <p><strong>Rúbrica:</strong> 1: Imágenes flotantes · 5: Maquetación correcta</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">2º ESO</h4>
+                            <p><strong>Objetivo:</strong> Edición de imágenes.</p>
+                            <p><strong>Actividad:</strong> Quitar fondos y ajustar brillo/contraste.</p>
+                            <p><strong>Evidencia:</strong> Antes y después de la imagen.</p>
+                            <p><strong>Rúbrica:</strong> 1: Sin edición · 5: Mejora visual clara</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">3º ESO</h4>
+                            <p><strong>Objetivo:</strong> Uso de IA generativa.</p>
+                            <p><strong>Actividad:</strong> Generar imagen con IA para ilustrar un relato.</p>
+                            <p><strong>Evidencia:</strong> Imagen + Prompt utilizado.</p>
+                            <p><strong>Rúbrica:</strong> 1: Mal prompt · 5: Prompt detallado</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">4º ESO</h4>
+                            <p><strong>Objetivo:</strong> Curación de contenidos.</p>
+                            <p><strong>Actividad:</strong> Blog o portfolio digital recopilando trabajos.</p>
+                            <p><strong>Evidencia:</strong> Enlace al portfolio (Sites).</p>
+                            <p><strong>Rúbrica:</strong> 1: Desactualizado · 5: Recopilación completa</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section id="area-4" class="space-y-6">
+            <div class="bg-white p-10 rounded-[3rem] border border-slate-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">Área 4</span>
+                    <span class="bg-blue-100 text-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">DigComp 3.0</span>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight leading-none italic uppercase">Seguridad</h2>
+                <p class="text-slate-500 mt-4">Protección de dispositivos, datos personales, salud y entorno.</p>
+            </div>
+
+            <div class="space-y-4">
+                <details class="bg-white border border-slate-200 rounded-[2rem] p-6">
+                    <summary class="font-black text-slate-700 text-lg italic uppercase cursor-pointer">4.1 Protección de dispositivos</summary>
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">1º ESO</h4>
+                            <p><strong>Objetivo:</strong> Contraseñas seguras.</p>
+                            <p><strong>Actividad:</strong> Crear una clave robusta (método frase).</p>
+                            <p><strong>Evidencia:</strong> Test de fortaleza de clave.</p>
+                            <p><strong>Rúbrica:</strong> 1: 123456 · 5: Inexpugnable</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">2º ESO</h4>
+                            <p><strong>Objetivo:</strong> Actualizaciones y antivirus.</p>
+                            <p><strong>Actividad:</strong> Simular la gestión de avisos de seguridad.</p>
+                            <p><strong>Evidencia:</strong> Captura de pantalla de seguridad.</p>
+                            <p><strong>Rúbrica:</strong> 1: Ignora avisos · 5: Actúa correctamente</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">3º ESO</h4>
+                            <p><strong>Objetivo:</strong> Protección en redes públicas.</p>
+                            <p><strong>Actividad:</strong> Diferenciar entre HTTPS y HTTP.</p>
+                            <p><strong>Evidencia:</strong> Análisis de 3 webs conocidas.</p>
+                            <p><strong>Rúbrica:</strong> 1: No distingue · 5: Identifica sitios seguros</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">4º ESO</h4>
+                            <p><strong>Objetivo:</strong> Autenticación doble factor (2FA).</p>
+                            <p><strong>Actividad:</strong> Configurar/entender el sistema de 2 pasos.</p>
+                            <p><strong>Evidencia:</strong> Explicación del proceso.</p>
+                            <p><strong>Rúbrica:</strong> 1: No lo usa · 5: Entiende su valor</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </section>
+        <section id="area-5" class="space-y-6">
+            <div class="bg-white p-10 rounded-[3rem] border border-slate-200">
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">Área 5</span>
+                    <span class="bg-blue-100 text-blue-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">DigComp 3.0</span>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight leading-none italic uppercase">Resolución de problemas</h2>
+                <p class="text-slate-500 mt-4">Identificar necesidades y recursos digitales, tomar decisiones sobre herramientas y resolver problemas conceptuales y técnicos.</p>
+            </div>
+
+            <div class="space-y-4">
+                <details class="bg-white border border-slate-200 rounded-[2rem] p-6">
+                    <summary class="font-black text-slate-700 text-lg italic uppercase cursor-pointer">5.1 Resolución de problemas técnicos</summary>
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">1º ESO</h4>
+                            <p><strong>Objetivo:</strong> Conexión y acceso.</p>
+                            <p><strong>Actividad:</strong> Resolver olvido de contraseña y conexión Wi-Fi.</p>
+                            <p><strong>Evidencia:</strong> Acceso autónomo al equipo.</p>
+                            <p><strong>Rúbrica:</strong> 1: Pide ayuda · 5: Autónomo</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">2º ESO</h4>
+                            <p><strong>Objetivo:</strong> Formatos de archivo.</p>
+                            <p><strong>Actividad:</strong> Convertir de Doc a PDF e imágenes (PNG/JPG).</p>
+                            <p><strong>Evidencia:</strong> Envío de archivos en formato pedido.</p>
+                            <p><strong>Rúbrica:</strong> 1: Formato erróneo · 5: Formato óptimo</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">3º ESO</h4>
+                            <p><strong>Objetivo:</strong> IA para solucionar dudas.</p>
+                            <p><strong>Actividad:</strong> Consultar a la IA cómo hacer una fórmula en Excel.</p>
+                            <p><strong>Evidencia:</strong> Conversación con la IA.</p>
+                            <p><strong>Rúbrica:</strong> 1: No pregunta · 5: Soluciona error</p>
+                        </div>
+                        <div class="bg-slate-50 p-5 rounded-2xl">
+                            <h4 class="font-black text-xs uppercase mb-2">4º ESO</h4>
+                            <p><strong>Objetivo:</strong> Autonomía de software.</p>
+                            <p><strong>Actividad:</strong> Instalar extensiones de utilidad educativa en Chrome.</p>
+                            <p><strong>Evidencia:</strong> Barra de extensiones operativa.</p>
+                            <p><strong>Rúbrica:</strong> 1: No instala · 5: Personaliza entorno</p>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </section>
+    </main>
 </body>
 </html>
