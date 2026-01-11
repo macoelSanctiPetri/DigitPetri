@@ -59,6 +59,13 @@
         const FileText = (p) => <IconBase {...p}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 22 8"/></IconBase>;
         const ChevronRight = (p) => <IconBase {...p}><polyline points="9 18 15 12 9 6"/></IconBase>;
         
+        const GraduationCap = (p) => (
+            <IconBase {...p}>
+                <path d="M22 10L12 5 2 10l10 5 10-5Z" />
+                <path d="M6 12v5c0 1.7 3.1 3 6 3s6-1.3 6-3v-5" />
+                <path d="M18 10v5" />
+            </IconBase>
+        );
         // Nuevo icono: DigitalStudent (Representa digitalización del alumnado)
         const DigitalStudent = (p) => (
             <IconBase {...p}>
@@ -4401,7 +4408,7 @@ function App() {
                     {!isPrintMode && (
                     <header className="bg-slate-900 text-white p-4 shadow-xl flex justify-between items-center sticky top-0 z-50">
                         <div className="flex items-center gap-3 cursor-pointer" onClick={() => {setView('home'); setSelectedArea(null); setSelectedComp(null);}}>
-                            <div className="bg-blue-600 text-white w-10 h-10 flex items-center justify-center rounded-xl font-black text-xl shadow-lg shadow-blue-900/50">S</div>
+                            <div className="bg-blue-600 text-white w-10 h-10 flex items-center justify-center rounded-xl shadow-lg shadow-blue-900/50"><GraduationCap size={22} /></div>
                             <div>
                                 <h1 className="text-lg font-black leading-none uppercase tracking-tighter italic">Plan de Digitalización ESO IES Sancti Petri</h1>
                                 <p className="text-[10px] text-blue-400 font-bold tracking-widest">DigComp 3.0</p>
@@ -4678,12 +4685,12 @@ function App() {
                                             <span className="bg-emerald-100 text-emerald-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest italic">Resultados</span>
                                         </div>
                                         <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none italic uppercase">Resultados de aprendizaje</h2>
-                                        <p className="text-slate-500 mt-4">Consulta los learning outcomes por ?rea y competencia. Usa el buscador y los filtros.</p>
+                                        <p className="text-slate-500 mt-4">Consulta los learning outcomes por área y competencia. Usa el buscador y los filtros.</p>
                                         <div className="mt-6 grid gap-3 lg:grid-cols-4">
                                             <input
                                                 value={outcomesQuery}
                                                 onChange={(e) => setOutcomesQuery(e.target.value)}
-                                                placeholder="Buscar por palabra o c?digo"
+                                                placeholder="Buscar por palabra o código"
                                                 className="w-full lg:col-span-2 bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-200"
                                             />
                                             <select
@@ -4691,9 +4698,9 @@ function App() {
                                                 onChange={(e) => setOutcomesArea(e.target.value)}
                                                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-200"
                                             >
-                                                <option value="all">Todas las ?reas</option>
+                                                <option value="all">Todas las áreas</option>
                                                 {digCompData.areas.map(a => (
-                                                    <option key={a.id} value={String(a.id)}>{`?rea ${a.id} ? ${a.title}`}</option>
+                                                    <option key={a.id} value={String(a.id)}>{`área ${a.id} · ${a.title}`}</option>
                                                 ))}
                                             </select>
                                             <select
@@ -4725,7 +4732,7 @@ function App() {
                                                 <div className={`${area.color} w-10 h-10 rounded-xl flex items-center justify-center shadow-inner`}>
                                                     {React.cloneElement(area.icon, { size: 18 })}
                                                 </div>
-                                                <h3 className="text-xl font-black text-slate-800 italic uppercase">?rea {area.id} ? {area.title}</h3>
+                                                <h3 className="text-xl font-black text-slate-800 italic uppercase">área {area.id} · {area.title}</h3>
                                             </div>
                                             <div className="space-y-3">
                                                 {area.competences.map(comp => {
@@ -4956,3 +4963,8 @@ function App() {
     </script>
 </body>
 </html>
+
+
+
+
+
